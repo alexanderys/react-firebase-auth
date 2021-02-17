@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 
 import * as ROUTES from '../../constants/routes';
 
-import '../../styles/Navigation.scss';
-
 const Navigation = () => (
     <div className="Navigation">
         <ul>
