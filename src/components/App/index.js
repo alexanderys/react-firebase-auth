@@ -1,3 +1,4 @@
+import React, { Component } from 'react';
 import {
     BrowserRouter as Router,
     Route,
@@ -13,12 +14,14 @@ import AccountPage from '../Account';
 import AdminPage from '../Admin';
 
 import * as ROUTES from '../../constants/routes';
-
+import { withAuthentication } from '../Session';
 
 const App = () => (
     <Router>
         <div>
             <Navigation />
+
+            <hr />
 
             <Route exact path={ROUTES.LANDING} component={LandingPage} />
             <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
@@ -31,4 +34,5 @@ const App = () => (
     </Router>
 );
 
-export default App;
+
+export default withAuthentication(App);

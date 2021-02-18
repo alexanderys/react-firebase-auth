@@ -9,3 +9,15 @@ export const withFirebase = Component => props => (
 )
 
 export default FirebaseContext;
+
+/*
+const withFirebaseClearerSyntax = function(component) {
+    return function(props) {
+        return (
+            <FirebaseContext.Consumer>
+                {firebase => <Components {...props} firebase={firebase} />}
+            </FirebaseContext.Consumer>
+        )
+    }
+}
+*/
