@@ -49,10 +49,6 @@ class MessagesBase extends Component {
     }
 
     onChangeText = event => {
-        this.setState({ text: event.target.value });
-    };
-
-    onChangeText = event => {
         this.setState({ text: event.target.value })
     }
 
@@ -60,6 +56,7 @@ class MessagesBase extends Component {
         this.props.firebase.messages().push({
             text: this.state.text,
             userId: authUser.uid,
+            createdAt: this.props.firebase.serverValue.TIMESTAMP,
         });
 
         this.setState({ text: '' });
@@ -71,9 +68,15 @@ class MessagesBase extends Component {
         this.props.firebase.message(uid).remove();
     };
 
-    onEditMessage = () => {
+    onEditMessage = (message, text) => {
+        const { uid, ...messageSnapshot } = message;
 
-    }
+        this.props.firebase.message(message.uid).set({
+            ...messageSnapshot,
+            text,
+            editedAt: this.props.firebase.serverValue.TIMESTAMP,
+        });
+    };
 
     render() {
         const { text, messages, loading } = this.state;
@@ -110,6 +113,7 @@ class MessagesBase extends Component {
     }
 }
 
+
 const MessageList = ({
     messages,
     onEditMessage,
@@ -126,6 +130,7 @@ const MessageList = ({
         ))}
     </ul>
 );
+
 
 class MessageItem extends Component {
     constructor(props) {
@@ -159,9 +164,28 @@ class MessageItem extends Component {
 
         return (
             <li>
-                <span>
-                    <strong>{message.userId}</strong> {message.text}
-                </span>
+                {editMode ? (
+                    <input
+                        type="text"
+                        value={editText}
+                        onChange={this.onChangeEditText}
+                    />
+                ) : (
+                        <span>
+                            <strong>{message.userId}</strong> {message.text}
+                            {message.editedAt && <span>(Edited)</span>}
+                        </span>
+                    )}
+
+                {editMode ? (
+                    <span>
+                        <button onClick={this.onSaveEditText}>Save</button>
+                        <button onClick={this.onToggleEditMode}>Reset</button>
+                    </span>
+                ) : (
+                        <button onClick={this.onToggleEditMode}>Edit</button>
+                    )}
+
                 {!editMode && (
                     <button
                         type="button"
@@ -180,3 +204,4 @@ const Messages = withFirebase(MessagesBase);
 const condition = authUser => !!authUser;
 
 export default withAuthorization(condition)(HomePage);
+
